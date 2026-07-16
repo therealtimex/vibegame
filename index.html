@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<title>Tech Millionaire VN | Vietnam Tech Summit 2026</title>
+<meta name="description" content="Ai Là Triệu Phú Công Nghệ - Vietnam Tech Summit 2026" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --neon-indigo:#818cf8;
+    --neon-purple:#c084fc;
+    --neon-fuchsia:#e879f9;
+  }
+  html,body{
+    background:#05040c;
+    font-family:'Rajdhani',sans-serif;
+    overflow-x:hidden;
+  }
+  .font-orbitron{ font-family:'Orbitron', sans-serif; }
+  .bg-grid{
+    background-image:
+      linear-gradient(rgba(129,140,248,0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(129,140,248,0.10) 1px, transparent 1px);
+    background-size: 34px 34px;
+  }
+  .bg-radial-glow{
+    background: radial-gradient(circle at 50% 0%, rgba(129,140,248,0.28), transparent 55%),
+                radial-gradient(circle at 85% 80%, rgba(192,132,252,0.22), transparent 45%),
+                radial-gradient(circle at 10% 85%, rgba(232,121,249,0.15), transparent 45%);
+  }
+  .glass{
+    background: linear-gradient(145deg, rgba(129,140,248,0.08), rgba(192,132,252,0.05));
+    border: 1px solid rgba(165,180,252,0.25);
+    backdrop-filter: blur(14px);
+  }
+  .glow-text{
+    text-shadow: 0 0 10px rgba(192,132,252,0.75), 0 0 30px rgba(129,140,248,0.5);
+  }
+  .glow-border{
+    box-shadow: 0 0 20px rgba(129,140,248,0.35), 0 0 60px rgba(192,132,252,0.15), inset 0 0 20px rgba(129,140,248,0.05);
+  }
+  @keyframes pulseGlow{
+    0%,100%{ box-shadow: 0 0 15px rgba(129,140,248,0.4), 0 0 35px rgba(192,132,252,0.2); }
+    50%{ box-shadow: 0 0 30px rgba(192,132,252,0.75), 0 0 70px rgba(129,140,248,0.4); }
+  }
+  .pulse-glow{ animation: pulseGlow 2.4s ease-in-out infinite; }
+  @keyframes floatUp{
+    0%,100%{ transform: translateY(0px); }
+    50%{ transform: translateY(-8px); }
+  }
+  .float{ animation: floatUp 4s ease-in-out infinite; }
+  @keyframes fadeSlideIn{
+    from{ opacity:0; transform: translateY(24px) scale(0.98); }
+    to{ opacity:1; transform: translateY(0) scale(1); }
+  }
+  .fade-slide-in{ animation: fadeSlideIn 0.5s cubic-bezier(.2,.8,.2,1) forwards; }
+  @keyframes optionIn{
+    from{ opacity:0; transform: translateX(-18px); }
+    to{ opacity:1; transform: translateX(0); }
+  }
+  .option-in{ animation: optionIn 0.4s ease forwards; }
+  @keyframes shakeX{
+    10%,90%{ transform: translateX(-2px); }
+    20%,80%{ transform: translateX(4px); }
+    30%,50%,70%{ transform: translateX(-8px); }
+    40%,60%{ transform: translateX(8px); }
+  }
+  .shake{ animation: shakeX 0.6s ease; }
+  @keyframes correctPop{
+    0%{ transform: scale(1); }
+    40%{ transform: scale(1.04); }
+    100%{ transform: scale(1); }
+  }
+  .correct-pop{ animation: correctPop 0.5s ease; }
+  @keyframes confettiFall{
+    0%{ transform: translateY(-10vh) rotate(0deg); opacity:1; }
+    100%{ transform: translateY(110vh) rotate(540deg); opacity:0.9; }
+  }
+  .confetti-piece{ position:fixed; top:0; will-change: transform; animation-name: confettiFall; animation-timing-function: linear; animation-fill-mode: forwards; z-index:60; }
+  @keyframes shrinkBar{ from{ width:100%; } to{ width:0%; } }
+  .timer-bar{ animation-timing-function: linear; animation-fill-mode: forwards; }
+  @keyframes slideInRight{ from{ transform: translateX(100%); } to{ transform: translateX(0); } }
+  .slide-in-right{ animation: slideInRight 0.35s ease forwards; }
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-thumb{ background: rgba(165,180,252,0.4); border-radius:8px; }
+  .diamond{
+    width:12px; height:12px; transform: rotate(45deg);
+  }
+  .screen{ display:none; }
+  .screen.active{ display:flex; }
+  .opt-btn[disabled]{ cursor:not-allowed; }
+  .opt-btn.correct-flash{ border-color:#4ade80 !important; background: linear-gradient(90deg, rgba(74,222,128,0.25), rgba(74,222,128,0.08)) !important; box-shadow:0 0 25px rgba(74,222,128,0.5); }
+  .opt-btn.wrong-flash{ border-color:#f87171 !important; background: linear-gradient(90deg, rgba(248,113,113,0.25), rgba(248,113,113,0.08)) !important; box-shadow:0 0 25px rgba(248,113,113,0.5); }
+  .opt-btn.dim-flash{ opacity:0.25; }
+</style>
+</head>
+<body class="min-h-screen bg-radial-glow bg-grid text-slate-100 selection:bg-fuchsia-500/40">
+
+<div id="confetti-root" class="pointer-events-none fixed inset-0 overflow-hidden z-50"></div>
+
+<!-- ============ START SCREEN ============ -->
+<section id="start-screen" class="screen active min-h-screen w-full flex-col items-center justify-center px-4 py-10">
+  <div class="max-w-2xl w-full glass glow-border rounded-3xl p-6 sm:p-10 text-center fade-slide-in">
+    <div class="flex justify-center mb-4">
+      <span class="text-[11px] sm:text-xs font-orbitron tracking-widest uppercase px-4 py-1.5 rounded-full border border-fuchsia-400/40 bg-fuchsia-500/10 text-fuchsia-300 pulse-glow">
+        Vietnam Tech Summit 2026
+      </span>
+    </div>
+    <h1 class="font-orbitron font-black text-4xl sm:text-6xl leading-tight tracking-tight glow-text">
+      <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">TECH</span>
+      <br/>
+      <span class="bg-gradient-to-r from-fuchsia-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">MILLIONAIRE</span>
+      <span class="align-super text-lg sm:text-2xl text-indigo-300 ml-1">VN</span>
+    </h1>
+    <p class="mt-4 text-slate-300 text-sm sm:text-base font-medium">
+      Ai Là Triệu Phú Công Nghệ &mdash; 12 câu hỏi CS, 1 ước mơ 500.000.000 ₫
+    </p>
+
+    <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+      <div class="glass rounded-xl p-3">
+        <p class="text-2xl">🎯</p>
+        <p class="text-xs text-slate-300 mt-1">12 câu hỏi CS</p>
+      </div>
+      <div class="glass rounded-xl p-3">
+        <p class="text-2xl">🧊</p>
+        <p class="text-xs text-slate-300 mt-1">Trợ giúp 50:50</p>
+      </div>
+      <div class="glass rounded-xl p-3">
+        <p class="text-2xl">💰</p>
+        <p class="text-xs text-slate-300 mt-1">Rút tiền bất kỳ lúc nào</p>
+      </div>
+      <div class="glass rounded-xl p-3">
+        <p class="text-2xl">⏱️</p>
+        <p class="text-xs text-slate-300 mt-1">45s mỗi câu</p>
+      </div>
+    </div>
+
+    <button id="btn-start" class="font-orbitron mt-8 w-full sm:w-auto px-10 py-4 rounded-2xl text-base sm:text-lg font-bold uppercase tracking-wide text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:from-indigo-500 hover:via-purple-500 hover:to-fuchsia-500 transition-all duration-300 hover:scale-105 pulse-glow">
+      🚀 Bắt đầu chơi
+    </button>
+    <p class="mt-4 text-[11px] text-slate-500">Được xây dựng cho sinh viên CNTT · Chạy hoàn toàn trên trình duyệt</p>
+  </div>
+</section>
+
+<!-- ============ GAME SCREEN ============ -->
+<section id="game-screen" class="screen min-h-screen w-full flex-col px-3 sm:px-6 py-4 sm:py-6 max-w-6xl mx-auto">
+
+  <!-- top bar -->
+  <div class="flex items-center justify-between gap-3 mb-4">
+    <div class="flex items-center gap-2">
+      <span class="font-orbitron text-xs sm:text-sm font-bold text-indigo-300">💎 TECH<span class="text-fuchsia-300">MILLIONAIRE</span></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span id="q-counter" class="font-orbitron text-xs sm:text-sm px-3 py-1 rounded-full glass border-indigo-400/30 text-indigo-200">Câu 1/12</span>
+      <button id="btn-toggle-ladder" class="lg:hidden font-orbitron text-xs px-3 py-1 rounded-full glass border-purple-400/30 text-purple-200">🏆 Bậc thang</button>
+    </div>
+  </div>
+
+  <!-- timer bar -->
+  <div class="w-full h-2 rounded-full bg-white/5 overflow-hidden mb-4 border border-white/5">
+    <div id="timer-bar" class="h-full bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 timer-bar" style="width:100%"></div>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-4">
+    <!-- question + options -->
+    <div class="flex-1 flex flex-col gap-4">
+      <div id="question-card" class="glass glow-border rounded-2xl p-5 sm:p-7 fade-slide-in">
+        <p class="text-xs uppercase tracking-widest text-fuchsia-300 font-orbitron mb-2" id="current-prize-label">Đang chơi vì 500.000 ₫</p>
+        <h2 id="question-text" class="text-lg sm:text-2xl font-semibold text-slate-100 leading-snug"></h2>
+      </div>
+
+      <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"></div>
+
+      <div class="flex flex-wrap items-center gap-3 mt-1">
+        <button id="btn-5050" class="opt-btn font-orbitron text-xs sm:text-sm px-4 py-3 rounded-xl glass border border-indigo-400/40 hover:border-indigo-300 hover:scale-105 transition-all flex items-center gap-2">
+          <span class="diamond bg-indigo-400"></span> 50:50
+        </button>
+        <button id="btn-walk" class="opt-btn font-orbitron text-xs sm:text-sm px-4 py-3 rounded-xl glass border border-amber-400/40 hover:border-amber-300 hover:scale-105 transition-all flex items-center gap-2 ml-auto">
+          💰 Rút tiền &amp; dừng
+        </button>
+      </div>
+    </div>
+
+    <!-- ladder desktop -->
+    <aside class="hidden lg:block w-64">
+      <div class="glass rounded-2xl p-4 sticky top-4">
+        <p class="font-orbitron text-xs uppercase tracking-widest text-purple-300 mb-3">Bậc thang giải thưởng</p>
+        <ol id="ladder-list" class="flex flex-col-reverse gap-1 text-sm"></ol>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- mobile ladder drawer -->
+<div id="ladder-drawer" class="fixed inset-0 z-40 hidden">
+  <div id="ladder-drawer-backdrop" class="absolute inset-0 bg-black/70"></div>
+  <div class="absolute right-0 top-0 h-full w-72 max-w-[85vw] glass border-l border-purple-400/30 p-4 slide-in-right overflow-y-auto">
+    <div class="flex items-center justify-between mb-3">
+      <p class="font-orbitron text-xs uppercase tracking-widest text-purple-300">Bậc thang giải thưởng</p>
+      <button id="btn-close-ladder" class="text-slate-300 text-lg leading-none">✕</button>
+    </div>
+    <ol id="ladder-list-mobile" class="flex flex-col-reverse gap-1 text-sm"></ol>
+  </div>
+</div>
+
+<!-- ============ GAME OVER SCREEN ============ -->
+<section id="over-screen" class="screen min-h-screen w-full flex-col items-center justify-center px-4 py-10">
+  <div class="max-w-xl w-full glass glow-border rounded-3xl p-6 sm:p-10 text-center fade-slide-in">
+    <p id="over-emoji" class="text-5xl mb-3 float">🏆</p>
+    <h2 id="over-title" class="font-orbitron font-black text-2xl sm:text-4xl glow-text bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent"></h2>
+    <p id="over-subtitle" class="mt-3 text-slate-300 text-sm sm:text-base"></p>
+
+    <div class="mt-6 glass rounded-2xl p-5">
+      <p class="text-xs uppercase tracking-widest text-fuchsia-300 font-orbitron">Số tiền bạn nhận được</p>
+      <p id="over-amount" class="font-orbitron font-black text-3xl sm:text-5xl mt-2 text-white"></p>
+    </div>
+
+    <div id="over-answer-reveal" class="mt-4 text-sm text-slate-300"></div>
+
+    <button id="btn-restart" class="font-orbitron mt-7 w-full sm:w-auto px-10 py-4 rounded-2xl text-base font-bold uppercase tracking-wide text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:scale-105 transition-all duration-300 pulse-glow">
+      🔁 Chơi lại
+    </button>
+  </div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+
+  const QUESTIONS = [
+    { q:"CPU là viết tắt của cụm từ nào?", opts:["Central Processing Unit","Computer Personal Unit","Central Processor Utility","Core Processing Unit"], correct:0 },
+    { q:"Cấu trúc dữ liệu nào hoạt động theo nguyên tắc LIFO (vào sau ra trước)?", opts:["Queue (Hàng đợi)","Stack (Ngăn xếp)","Linked List","Binary Tree"], correct:1 },
+    { q:"Độ phức tạp thời gian của thuật toán tìm kiếm nhị phân (Binary Search) là gì?", opts:["O(n)","O(n²)","O(log n)","O(1)"], correct:2 },
+    { q:"Ngôn ngữ nào được dùng chủ yếu để tạo kiểu (styling) cho trang web?", opts:["HTML","SQL","CSS","JavaScript"], correct:2 },
+    { q:"HTTP là viết tắt của cụm từ nào?", opts:["HyperText Transfer Protocol","HighText Transmission Process","Hyperlink Text Transport Protocol","Home Tool Transfer Protocol"], correct:0 },
+    { q:"Trong Git, lệnh nào dùng để tạo một nhánh (branch) mới?", opts:["git clone <url>","git branch <name>","git merge <name>","git pull <name>"], correct:1 },
+    { q:"Thuật toán sắp xếp nào có độ phức tạp trung bình O(n log n) và dùng chiến lược chia để trị?", opts:["Bubble Sort","Insertion Sort","Merge Sort","Selection Sort"], correct:2 },
+    { q:"API là viết tắt của cụm từ nào?", opts:["Application Programming Interface","Advanced Programming Instruction","Automated Program Interaction","Application Process Integration"], correct:0 },
+    { q:"Trong các lựa chọn sau, cơ sở dữ liệu nào KHÔNG phải là NoSQL?", opts:["MongoDB","Redis","PostgreSQL","Cassandra"], correct:2 },
+    { q:"Trong Machine Learning, hiện tượng \"overfitting\" nghĩa là gì?", opts:["Mô hình học tốt trên dữ liệu huấn luyện nhưng kém trên dữ liệu mới","Mô hình quá đơn giản để học được gì","Mô hình huấn luyện quá nhanh","Mô hình dùng quá ít tham số"], correct:0 },
+    { q:"Mục đích chính của hàm băm (hash function) trong bảng băm (hash table) là gì?", opts:["Mã hoá dữ liệu để bảo mật","Ánh xạ khoá (key) thành chỉ số/ô nhớ (bucket)","Sắp xếp dữ liệu theo thứ tự","Nén dữ liệu để tiết kiệm bộ nhớ"], correct:1 },
+    { q:"Lớp độ phức tạp nào chứa các bài toán có thể kiểm chứng (verify) lời giải trong thời gian đa thức?", opts:["P","NP","EXPTIME","PSPACE"], correct:1 },
+  ];
+
+  const PRIZES = [
+    500000, 1000000, 2000000, 5000000, 10000000,
+    20000000, 35000000, 50000000, 75000000, 100000000,
+    200000000, 500000000
+  ];
+  const CHECKPOINTS = [4, 9]; // 0-indexed question positions that lock in a guaranteed prize
+  const TIME_PER_Q = 45;
+
+  const fmt = (n) => n.toLocaleString('vi-VN') + ' ₫';
+
+  const state = {
+    current: 0,
+    usedFifty: false,
+    locked: false,
+    timeLeft: TIME_PER_Q,
+    timerId: null,
+    hiddenOptions: [],
+  };
+
+  const els = {
+    start: document.getElementById('start-screen'),
+    game: document.getElementById('game-screen'),
+    over: document.getElementById('over-screen'),
+    btnStart: document.getElementById('btn-start'),
+    btnRestart: document.getElementById('btn-restart'),
+    qCounter: document.getElementById('q-counter'),
+    questionText: document.getElementById('question-text'),
+    currentPrizeLabel: document.getElementById('current-prize-label'),
+    optionsGrid: document.getElementById('options-grid'),
+    timerBar: document.getElementById('timer-bar'),
+    btn5050: document.getElementById('btn-5050'),
+    btnWalk: document.getElementById('btn-walk'),
+    ladderList: document.getElementById('ladder-list'),
+    ladderListMobile: document.getElementById('ladder-list-mobile'),
+    btnToggleLadder: document.getElementById('btn-toggle-ladder'),
+    btnCloseLadder: document.getElementById('btn-close-ladder'),
+    ladderDrawer: document.getElementById('ladder-drawer'),
+    ladderDrawerBackdrop: document.getElementById('ladder-drawer-backdrop'),
+    overEmoji: document.getElementById('over-emoji'),
+    overTitle: document.getElementById('over-title'),
+    overSubtitle: document.getElementById('over-subtitle'),
+    overAmount: document.getElementById('over-amount'),
+    overAnswerReveal: document.getElementById('over-answer-reveal'),
+    confettiRoot: document.getElementById('confetti-root'),
+  };
+
+  function showScreen(name){
+    [els.start, els.game, els.over].forEach(s => s.classList.remove('active'));
+    ({start: els.start, game: els.game, over: els.over})[name].classList.add('active');
+  }
+
+  function safeAmount(failedAtIndex){
+    let amt = 0;
+    for (const cp of CHECKPOINTS){
+      if (failedAtIndex > cp) amt = PRIZES[cp];
+    }
+    return amt;
+  }
+
+  function buildLadder(){
+    const build = (target) => {
+      target.innerHTML = '';
+      PRIZES.forEach((amt, idx) => {
+        const li = document.createElement('li');
+        const isCheckpoint = CHECKPOINTS.includes(idx);
+        const isCurrent = idx === state.current;
+        const isPast = idx < state.current;
+        li.className = [
+          'flex items-center justify-between rounded-lg px-2.5 py-1.5 transition-all',
+          isCurrent ? 'bg-gradient-to-r from-indigo-500/40 to-fuchsia-500/30 border border-fuchsia-300/50 scale-105 font-bold text-white' : '',
+          isPast && !isCurrent ? 'text-slate-500' : '',
+          !isCurrent && !isPast ? 'text-slate-300' : '',
+        ].join(' ');
+        li.innerHTML = `<span>${idx+1}. ${isCheckpoint ? '⭐ ' : ''}</span><span>${fmt(amt)}</span>`;
+        target.appendChild(li);
+      });
+    };
+    build(els.ladderList);
+    build(els.ladderListMobile);
+  }
+
+  function clearTimer(){
+    if (state.timerId){ clearInterval(state.timerId); state.timerId = null; }
+  }
+
+  function startTimer(){
+    clearTimer();
+    state.timeLeft = TIME_PER_Q;
+    els.timerBar.style.transition = 'none';
+    els.timerBar.style.width = '100%';
+    els.timerBar.classList.remove('from-red-500','to-red-600');
+    els.timerBar.classList.add('from-indigo-400','via-purple-400','to-fuchsia-400');
+    requestAnimationFrame(() => {
+      els.timerBar.style.transition = `width ${TIME_PER_Q}s linear`;
+      els.timerBar.style.width = '0%';
+    });
+    state.timerId = setInterval(() => {
+      state.timeLeft -= 1;
+      if (state.timeLeft <= 10){
+        els.timerBar.classList.remove('from-indigo-400','via-purple-400','to-fuchsia-400');
+        els.timerBar.classList.add('from-red-500','to-red-600');
+      }
+      if (state.timeLeft <= 0){
+        clearTimer();
+        onTimeout();
+      }
+    }, 1000);
+  }
+
+  function renderQuestion(){
+    const idx = state.current;
+    const data = QUESTIONS[idx];
+    state.locked = false;
+    state.hiddenOptions = [];
+
+    els.qCounter.textContent = `Câu ${idx+1}/12`;
+    els.currentPrizeLabel.textContent = `Đang chơi vì ${fmt(PRIZES[idx])}`;
+    els.questionText.textContent = data.q;
+
+    els.questionText.parentElement.classList.remove('fade-slide-in');
+    void els.questionText.parentElement.offsetWidth;
+    els.questionText.parentElement.classList.add('fade-slide-in');
+
+    els.optionsGrid.innerHTML = '';
+    const labels = ['A','B','C','D'];
+    data.opts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn option-in text-left glass rounded-xl px-4 py-3.5 sm:py-4 flex items-center gap-3 border border-indigo-400/25 hover:border-fuchsia-300/60 hover:scale-[1.02] transition-all text-sm sm:text-base';
+      btn.style.animationDelay = (i * 0.07) + 's';
+      btn.dataset.idx = i;
+      btn.innerHTML = `<span class="diamond bg-purple-400 shrink-0"></span><span class="font-orbitron text-indigo-300 mr-1">${labels[i]}.</span><span>${opt}</span>`;
+      btn.addEventListener('click', () => onAnswer(i, btn));
+      els.optionsGrid.appendChild(btn);
+    });
+
+    els.btn5050.disabled = state.usedFifty;
+    els.btn5050.classList.toggle('opacity-30', state.usedFifty);
+
+    buildLadder();
+    startTimer();
+  }
+
+  function lockAllOptions(){
+    els.optionsGrid.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+    els.btn5050.disabled = true;
+    els.btnWalk.disabled = true;
+  }
+
+  function onAnswer(selectedIdx, btnEl){
+    if (state.locked) return;
+    state.locked = true;
+    clearTimer();
+    lockAllOptions();
+
+    const data = QUESTIONS[state.current];
+    const buttons = [...els.optionsGrid.querySelectorAll('.opt-btn')];
+    const isCorrect = selectedIdx === data.correct;
+
+    setTimeout(() => {
+      buttons.forEach(b => {
+        const bi = Number(b.dataset.idx);
+        if (bi === data.correct){
+          b.classList.add('correct-flash', 'correct-pop');
+        } else if (bi === selectedIdx && !isCorrect){
+          b.classList.add('wrong-flash', 'shake');
+        } else {
+          b.classList.add('dim-flash');
+        }
+      });
+    }, 250);
+
+    setTimeout(() => {
+      if (isCorrect){
+        if (state.current === QUESTIONS.length - 1){
+          endGame('win');
+        } else {
+          state.current += 1;
+          renderQuestion();
+        }
+      } else {
+        endGame('lose', data.correct);
+      }
+    }, 1700);
+  }
+
+  function onTimeout(){
+    if (state.locked) return;
+    state.locked = true;
+    lockAllOptions();
+    const data = QUESTIONS[state.current];
+    const buttons = [...els.optionsGrid.querySelectorAll('.opt-btn')];
+    buttons.forEach(b => {
+      const bi = Number(b.dataset.idx);
+      if (bi === data.correct) b.classList.add('correct-flash','correct-pop');
+      else b.classList.add('dim-flash');
+    });
+    setTimeout(() => endGame('timeout', data.correct), 1400);
+  }
+
+  function useFiftyFifty(){
+    if (state.usedFifty || state.locked) return;
+    state.usedFifty = true;
+    els.btn5050.disabled = true;
+    els.btn5050.classList.add('opacity-30');
+
+    const data = QUESTIONS[state.current];
+    const wrongIdxs = [0,1,2,3].filter(i => i !== data.correct);
+    wrongIdxs.sort(() => Math.random() - 0.5);
+    const toHide = wrongIdxs.slice(0, 2);
+    state.hiddenOptions = toHide;
+
+    toHide.forEach(i => {
+      const btn = els.optionsGrid.querySelector(`.opt-btn[data-idx="${i}"]`);
+      if (btn){
+        btn.classList.add('opacity-0', 'pointer-events-none');
+        btn.disabled = true;
+      }
+    });
+  }
+
+  function walkAway(){
+    if (state.locked) return;
+    state.locked = true;
+    clearTimer();
+    lockAllOptions();
+    const bankedIdx = state.current - 1;
+    const amount = bankedIdx >= 0 ? PRIZES[bankedIdx] : 0;
+    endGame('walk', null, amount);
+  }
+
+  function spawnConfetti(){
+    const colors = ['#818cf8','#c084fc','#e879f9','#facc15','#34d399'];
+    for (let i=0; i<70; i++){
+      const piece = document.createElement('div');
+      const size = 6 + Math.random()*7;
+      piece.className = 'confetti-piece';
+      piece.style.left = (Math.random()*100) + 'vw';
+      piece.style.width = size + 'px';
+      piece.style.height = (size*0.4) + 'px';
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.animationDuration = (2.6 + Math.random()*2) + 's';
+      piece.style.animationDelay = (Math.random()*0.6) + 's';
+      piece.style.borderRadius = '2px';
+      els.confettiRoot.appendChild(piece);
+      setTimeout(() => piece.remove(), 6000);
+    }
+  }
+
+  function endGame(kind, correctIdx, forcedAmount){
+    clearTimer();
+    let amount;
+    let title, subtitle, emoji, revealHtml = '';
+
+    if (kind === 'win'){
+      amount = PRIZES[PRIZES.length - 1];
+      title = 'TECH MILLIONAIRE!';
+      subtitle = 'Chúc mừng! Bạn đã chinh phục toàn bộ 12 câu hỏi và trở thành Tech Millionaire VN 2026! 🎉';
+      emoji = '👑';
+      spawnConfetti();
+    } else if (kind === 'walk'){
+      amount = forcedAmount;
+      title = 'Đã Rút Tiền!';
+      subtitle = 'Bạn đã khôn ngoan dừng lại và giữ chắc phần thưởng của mình.';
+      emoji = '💰';
+    } else {
+      amount = safeAmount(state.current);
+      title = kind === 'timeout' ? 'Hết Giờ!' : 'Trò Chơi Kết Thúc';
+      subtitle = kind === 'timeout'
+        ? 'Bạn đã không trả lời kịp trong thời gian quy định.'
+        : 'Rất tiếc, câu trả lời chưa chính xác. Hãy thử lại lần sau!';
+      emoji = '💥';
+      if (correctIdx !== null && correctIdx !== undefined){
+        revealHtml = `Đáp án đúng là: <span class="text-emerald-400 font-semibold">${QUESTIONS[state.current].opts[correctIdx]}</span>`;
+      }
+    }
+
+    els.overEmoji.textContent = emoji;
+    els.overTitle.textContent = title;
+    els.overSubtitle.textContent = subtitle;
+    els.overAmount.textContent = fmt(amount);
+    els.overAnswerReveal.innerHTML = revealHtml;
+
+    showScreen('over');
+  }
+
+  function resetGame(){
+    state.current = 0;
+    state.usedFifty = false;
+    state.locked = false;
+    state.hiddenOptions = [];
+    clearTimer();
+    els.btnWalk.disabled = false;
+  }
+
+  function startGame(){
+    resetGame();
+    showScreen('game');
+    renderQuestion();
+  }
+
+  function toggleLadderDrawer(open){
+    els.ladderDrawer.classList.toggle('hidden', !open);
+  }
+
+  els.btnStart.addEventListener('click', startGame);
+  els.btnRestart.addEventListener('click', startGame);
+  els.btn5050.addEventListener('click', useFiftyFifty);
+  els.btnWalk.addEventListener('click', walkAway);
+  els.btnToggleLadder.addEventListener('click', () => toggleLadderDrawer(true));
+  els.btnCloseLadder.addEventListener('click', () => toggleLadderDrawer(false));
+  els.ladderDrawerBackdrop.addEventListener('click', () => toggleLadderDrawer(false));
+
+  buildLadder();
+})();
+</script>
+</body>
+</html>
