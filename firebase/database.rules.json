@@ -2,6 +2,7 @@
   "rules": {
     "leaderboard": {
       ".read": true,
+      ".indexOn": ["amount"],
       "$entry": {
         ".write": "!data.exists()",
         ".validate": "newData.hasChildren(['name', 'amount', 'ts']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 20 && newData.child('amount').isNumber() && newData.child('amount').val() >= 0 && newData.child('amount').val() <= 500000000 && newData.child('ts').isNumber()"
