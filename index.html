@@ -139,9 +139,14 @@
       </div>
     </div>
 
-    <button id="btn-start" class="font-orbitron mt-8 w-full sm:w-auto px-10 py-4 rounded-2xl text-base sm:text-lg font-bold uppercase tracking-wide text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:from-indigo-500 hover:via-purple-500 hover:to-fuchsia-500 transition-all duration-300 hover:scale-105 pulse-glow">
-      🚀 Bắt đầu chơi
-    </button>
+    <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <button id="btn-start" class="font-orbitron w-full sm:w-auto px-10 py-4 rounded-2xl text-base sm:text-lg font-bold uppercase tracking-wide text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:from-indigo-500 hover:via-purple-500 hover:to-fuchsia-500 transition-all duration-300 hover:scale-105 pulse-glow">
+        🚀 Bắt đầu chơi
+      </button>
+      <button id="btn-open-leaderboard" class="font-orbitron w-full sm:w-auto px-6 py-4 rounded-2xl text-sm font-bold uppercase tracking-wide text-indigo-200 glass border border-indigo-400/40 hover:border-fuchsia-300/60 hover:scale-105 transition-all duration-300">
+        🏆 Bảng xếp hạng
+      </button>
+    </div>
     <p class="mt-4 text-[11px] text-slate-500">Được xây dựng cho sinh viên CNTT · Chạy hoàn toàn trên trình duyệt</p>
   </div>
 </section>
@@ -156,7 +161,8 @@
     </div>
     <div class="flex items-center gap-2">
       <span id="q-counter" class="font-orbitron text-xs sm:text-sm px-3 py-1 rounded-full glass border-indigo-400/30 text-indigo-200">Câu 1/12</span>
-      <button id="btn-toggle-ladder" class="lg:hidden font-orbitron text-xs px-3 py-1 rounded-full glass border-purple-400/30 text-purple-200">🏆 Bậc thang</button>
+      <button id="btn-toggle-ladder" class="lg:hidden font-orbitron text-xs px-3 py-1 rounded-full glass border-purple-400/30 text-purple-200">📶 Bậc thang</button>
+      <button id="btn-game-leaderboard" class="font-orbitron text-xs px-3 py-1 rounded-full glass border-fuchsia-400/30 text-fuchsia-200">🏆</button>
     </div>
   </div>
 
@@ -207,6 +213,24 @@
   </div>
 </div>
 
+<!-- ============ LIVE LEADERBOARD MODAL ============ -->
+<div id="leaderboard-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+  <div id="leaderboard-backdrop" class="absolute inset-0 bg-black/75"></div>
+  <div class="relative glass glow-border rounded-3xl p-5 sm:p-7 max-w-md w-full max-h-[85vh] overflow-y-auto fade-slide-in">
+    <div class="flex items-center justify-between mb-1">
+      <h3 class="font-orbitron text-lg sm:text-xl font-bold glow-text bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">🏆 Bảng Xếp Hạng Trực Tiếp</h3>
+      <button id="btn-close-leaderboard" class="text-slate-300 text-xl leading-none px-1">✕</button>
+    </div>
+    <p class="text-[11px] text-slate-400 mb-3 flex items-center gap-1.5">
+      <span id="leaderboard-live-dot" class="inline-block w-2 h-2 rounded-full bg-emerald-400 pulse-glow"></span>
+      Cập nhật theo thời gian thực
+    </p>
+    <ol id="leaderboard-list" class="flex flex-col gap-1.5 text-sm min-h-[80px]"></ol>
+    <p id="leaderboard-empty" class="hidden text-center text-slate-400 text-sm py-6">Chưa có ai trên bảng xếp hạng. Hãy là người đầu tiên! 🚀</p>
+    <p id="leaderboard-status" class="hidden text-center text-slate-400 text-sm py-6"></p>
+  </div>
+</div>
+
 <!-- ============ GAME OVER SCREEN ============ -->
 <section id="over-screen" class="screen min-h-screen w-full flex-col items-center justify-center px-4 py-10">
   <div class="max-w-xl w-full glass glow-border rounded-3xl p-6 sm:p-10 text-center fade-slide-in">
@@ -221,15 +245,84 @@
 
     <div id="over-answer-reveal" class="mt-4 text-sm text-slate-300"></div>
 
-    <button id="btn-restart" class="font-orbitron mt-7 w-full sm:w-auto px-10 py-4 rounded-2xl text-base font-bold uppercase tracking-wide text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:scale-105 transition-all duration-300 pulse-glow">
-      🔁 Chơi lại
-    </button>
+    <div id="submit-score-box" class="hidden mt-6 glass rounded-2xl p-4 text-left">
+      <p class="font-orbitron text-xs uppercase tracking-widest text-indigo-300 mb-2">Ghi danh vào bảng xếp hạng</p>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input id="player-name-input" maxlength="20" placeholder="Tên của bạn..." class="flex-1 rounded-xl bg-white/5 border border-indigo-400/30 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-400/60" />
+        <button id="btn-submit-score" class="font-orbitron text-xs sm:text-sm px-5 py-2.5 rounded-xl text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:scale-105 transition-all whitespace-nowrap">Gửi điểm 🚀</button>
+      </div>
+      <p id="submit-score-msg" class="text-xs text-slate-400 mt-2"></p>
+    </div>
+
+    <div class="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <button id="btn-restart" class="font-orbitron w-full sm:w-auto px-10 py-4 rounded-2xl text-base font-bold uppercase tracking-wide text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:scale-105 transition-all duration-300 pulse-glow">
+        🔁 Chơi lại
+      </button>
+      <button id="btn-view-leaderboard" class="font-orbitron w-full sm:w-auto px-6 py-4 rounded-2xl text-sm font-bold uppercase tracking-wide text-indigo-200 glass border border-indigo-400/40 hover:border-fuchsia-300/60 hover:scale-105 transition-all duration-300">
+        🏆 Xem bảng xếp hạng
+      </button>
+    </div>
   </div>
 </section>
+
+<!--
+  ===========================================================================
+  REALTIME LEADERBOARD SETUP (Firebase Realtime Database)
+  ===========================================================================
+  1. Go to https://console.firebase.google.com -> "Add project" (free Spark
+     plan is enough).
+  2. In the project: Build -> Realtime Database -> "Create Database"
+     (pick any region, start in "test mode" then lock down with the rules
+     below).
+  3. Project settings (gear icon) -> General -> "Your apps" -> Add app -> Web
+     (</> icon). Copy the firebaseConfig object it gives you.
+  4. Paste those values into FIREBASE_CONFIG below (in the <script> block).
+  5. In Realtime Database -> Rules, use:
+     {
+       "rules": {
+         "leaderboard": {
+           ".read": true,
+           ".write": true,
+           "$entry": {
+             ".validate": "newData.hasChildren(['name','amount','ts']) &&
+                            newData.child('name').isString() &&
+                            newData.child('name').val().length <= 20 &&
+                            newData.child('amount').isNumber()"
+           }
+         }
+       }
+     }
+  That's it — no server/build step needed, GitHub Pages just serves this
+  static file and the browser talks to Firebase directly.
+  ===========================================================================
+-->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
 
 <script>
 (function(){
   "use strict";
+
+  // TODO: replace with your Firebase project's web config
+  // (Firebase console -> Project settings -> Your apps -> Web app).
+  const FIREBASE_CONFIG = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+  };
+
+  let lbRef = null;
+  let lbReady = false;
+  try {
+    if (FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY" && window.firebase) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      lbRef = firebase.database().ref('leaderboard');
+      lbReady = true;
+    }
+  } catch (e) {
+    console.warn('Leaderboard disabled — Firebase not configured:', e);
+  }
 
   const QUESTIONS = [
     { q:"CPU là viết tắt của cụm từ nào?", opts:["Central Processing Unit","Computer Personal Unit","Central Processor Utility","Core Processing Unit"], correct:0 },
@@ -290,6 +383,19 @@
     overAmount: document.getElementById('over-amount'),
     overAnswerReveal: document.getElementById('over-answer-reveal'),
     confettiRoot: document.getElementById('confetti-root'),
+    leaderboardModal: document.getElementById('leaderboard-modal'),
+    leaderboardBackdrop: document.getElementById('leaderboard-backdrop'),
+    btnOpenLeaderboardStart: document.getElementById('btn-open-leaderboard'),
+    btnGameLeaderboard: document.getElementById('btn-game-leaderboard'),
+    btnViewLeaderboard: document.getElementById('btn-view-leaderboard'),
+    btnCloseLeaderboard: document.getElementById('btn-close-leaderboard'),
+    leaderboardList: document.getElementById('leaderboard-list'),
+    leaderboardEmpty: document.getElementById('leaderboard-empty'),
+    leaderboardStatus: document.getElementById('leaderboard-status'),
+    submitScoreBox: document.getElementById('submit-score-box'),
+    playerNameInput: document.getElementById('player-name-input'),
+    btnSubmitScore: document.getElementById('btn-submit-score'),
+    submitScoreMsg: document.getElementById('submit-score-msg'),
   };
 
   function showScreen(name){
@@ -528,7 +634,89 @@
     els.overAmount.textContent = fmt(amount);
     els.overAnswerReveal.innerHTML = revealHtml;
 
+    state.pendingScore = amount;
+    els.playerNameInput.value = '';
+    els.submitScoreMsg.textContent = '';
+    els.btnSubmitScore.disabled = false;
+    els.btnSubmitScore.classList.remove('opacity-40');
+    els.submitScoreBox.classList.toggle('hidden', !(lbReady && amount > 0));
+
     showScreen('over');
+  }
+
+  // ---------------- Realtime leaderboard ----------------
+
+  function renderLeaderboardEntries(entries){
+    els.leaderboardList.innerHTML = '';
+    els.leaderboardEmpty.classList.toggle('hidden', entries.length > 0);
+    const medals = ['🥇','🥈','🥉'];
+    entries.forEach((entry, i) => {
+      const li = document.createElement('li');
+      li.className = 'flex items-center justify-between gap-2 rounded-xl px-3 py-2 glass border border-indigo-400/15' +
+        (i === 0 ? ' border-fuchsia-300/50 bg-fuchsia-500/10' : '');
+      li.innerHTML = `
+        <span class="flex items-center gap-2 truncate">
+          <span class="font-orbitron text-xs w-6 text-center shrink-0">${medals[i] || (i+1)}</span>
+          <span class="truncate">${escapeHtml(entry.name)}</span>
+        </span>
+        <span class="font-orbitron font-bold text-fuchsia-200 shrink-0">${fmt(entry.amount)}</span>`;
+      els.leaderboardList.appendChild(li);
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = String(str || '');
+    return div.innerHTML;
+  }
+
+  function subscribeLeaderboard(){
+    if (!lbReady){
+      els.leaderboardStatus.textContent = 'Bảng xếp hạng chưa được thiết lập (cần cấu hình Firebase).';
+      els.leaderboardStatus.classList.remove('hidden');
+      return;
+    }
+    lbRef.orderByChild('amount').limitToLast(10).on('value', (snap) => {
+      const entries = [];
+      snap.forEach(child => entries.push(child.val()));
+      entries.reverse(); // highest first
+      renderLeaderboardEntries(entries);
+    }, (err) => {
+      console.warn('Leaderboard read failed:', err);
+      els.leaderboardStatus.textContent = 'Không thể tải bảng xếp hạng lúc này.';
+      els.leaderboardStatus.classList.remove('hidden');
+    });
+  }
+
+  function openLeaderboard(){
+    els.leaderboardModal.classList.remove('hidden');
+    els.leaderboardModal.classList.add('flex');
+  }
+
+  function closeLeaderboard(){
+    els.leaderboardModal.classList.add('hidden');
+    els.leaderboardModal.classList.remove('flex');
+  }
+
+  function submitScore(){
+    const name = els.playerNameInput.value.trim().slice(0, 20) || 'Ẩn danh';
+    if (!lbReady){
+      els.submitScoreMsg.textContent = 'Bảng xếp hạng chưa được thiết lập.';
+      return;
+    }
+    els.btnSubmitScore.disabled = true;
+    els.btnSubmitScore.classList.add('opacity-40');
+    els.submitScoreMsg.textContent = 'Đang gửi...';
+    lbRef.push({ name, amount: state.pendingScore, ts: Date.now() })
+      .then(() => {
+        els.submitScoreMsg.textContent = '✅ Đã lên bảng xếp hạng!';
+      })
+      .catch((err) => {
+        console.warn('Score submit failed:', err);
+        els.submitScoreMsg.textContent = '❌ Gửi điểm thất bại, thử lại sau.';
+        els.btnSubmitScore.disabled = false;
+        els.btnSubmitScore.classList.remove('opacity-40');
+      });
   }
 
   function resetGame(){
@@ -558,7 +746,16 @@
   els.btnCloseLadder.addEventListener('click', () => toggleLadderDrawer(false));
   els.ladderDrawerBackdrop.addEventListener('click', () => toggleLadderDrawer(false));
 
+  els.btnOpenLeaderboardStart.addEventListener('click', openLeaderboard);
+  els.btnGameLeaderboard.addEventListener('click', openLeaderboard);
+  els.btnViewLeaderboard.addEventListener('click', openLeaderboard);
+  els.btnCloseLeaderboard.addEventListener('click', closeLeaderboard);
+  els.leaderboardBackdrop.addEventListener('click', closeLeaderboard);
+  els.btnSubmitScore.addEventListener('click', submitScore);
+  els.playerNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitScore(); });
+
   buildLadder();
+  subscribeLeaderboard();
 })();
 </script>
 </body>
