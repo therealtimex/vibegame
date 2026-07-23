@@ -156,8 +156,9 @@
 
   <!-- top bar -->
   <div class="flex items-center justify-between gap-3 mb-4">
-    <div class="flex items-center gap-2">
-      <span class="font-orbitron text-xs sm:text-sm font-bold text-indigo-300">💎 TECH<span class="text-fuchsia-300">MILLIONAIRE</span></span>
+    <div class="flex items-center gap-2 min-w-0">
+      <span class="font-orbitron text-xs sm:text-sm font-bold text-indigo-300 whitespace-nowrap">💎 TECH<span class="text-fuchsia-300">MILLIONAIRE</span></span>
+      <span id="player-name-badge" class="hidden font-orbitron text-[10px] sm:text-xs px-2 py-1 rounded-full glass border-fuchsia-400/30 text-fuchsia-200 truncate max-w-[90px] sm:max-w-[140px]"></span>
     </div>
     <div class="flex items-center gap-2">
       <span id="q-counter" class="font-orbitron text-xs sm:text-sm px-3 py-1 rounded-full glass border-indigo-400/30 text-indigo-200">Câu 1/12</span>
@@ -210,6 +211,24 @@
       <button id="btn-close-ladder" class="text-slate-300 text-lg leading-none">✕</button>
     </div>
     <ol id="ladder-list-mobile" class="flex flex-col-reverse gap-1 text-sm"></ol>
+  </div>
+</div>
+
+<!-- ============ PLAYER NAME MODAL ============ -->
+<div id="name-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+  <div class="absolute inset-0 bg-black/75"></div>
+  <div class="relative glass glow-border rounded-3xl p-6 sm:p-7 max-w-sm w-full text-center fade-slide-in">
+    <p class="text-3xl mb-2 float">🕹️</p>
+    <h3 class="font-orbitron text-lg sm:text-xl font-bold glow-text bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">Bạn tên gì?</h3>
+    <p class="text-xs text-slate-400 mt-1.5">Tên này sẽ hiện trên bảng xếp hạng nếu bạn thắng giải</p>
+    <input id="name-modal-input" maxlength="20" placeholder="Nhập tên của bạn..." autocomplete="off"
+      class="mt-4 w-full rounded-xl bg-white/5 border border-indigo-400/30 px-4 py-3 text-sm text-center text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-400/60" />
+    <button id="btn-name-confirm" class="font-orbitron mt-4 w-full px-6 py-3.5 rounded-2xl text-sm font-bold uppercase tracking-wide text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 hover:scale-105 transition-all duration-300 pulse-glow">
+      🚀 Bắt đầu chơi
+    </button>
+    <button id="btn-name-skip" class="mt-3 text-xs text-slate-400 hover:text-slate-200 underline underline-offset-2">
+      Chơi ẩn danh
+    </button>
   </div>
 </div>
 
@@ -349,6 +368,8 @@
 
   const fmt = (n) => n.toLocaleString('vi-VN') + ' ₫';
 
+  const NAME_STORAGE_KEY = 'vibegame_player_name';
+
   const state = {
     current: 0,
     usedFifty: false,
@@ -356,6 +377,7 @@
     timeLeft: TIME_PER_Q,
     timerId: null,
     hiddenOptions: [],
+    playerName: localStorage.getItem(NAME_STORAGE_KEY) || '',
   };
 
   const els = {
@@ -396,6 +418,11 @@
     playerNameInput: document.getElementById('player-name-input'),
     btnSubmitScore: document.getElementById('btn-submit-score'),
     submitScoreMsg: document.getElementById('submit-score-msg'),
+    nameModal: document.getElementById('name-modal'),
+    nameModalInput: document.getElementById('name-modal-input'),
+    btnNameConfirm: document.getElementById('btn-name-confirm'),
+    btnNameSkip: document.getElementById('btn-name-skip'),
+    playerNameBadge: document.getElementById('player-name-badge'),
   };
 
   function showScreen(name){
@@ -635,7 +662,7 @@
     els.overAnswerReveal.innerHTML = revealHtml;
 
     state.pendingScore = amount;
-    els.playerNameInput.value = '';
+    els.playerNameInput.value = state.playerName || '';
     els.submitScoreMsg.textContent = '';
     els.btnSubmitScore.disabled = false;
     els.btnSubmitScore.classList.remove('opacity-40');
@@ -734,12 +761,52 @@
     renderQuestion();
   }
 
+  function updatePlayerBadge(){
+    if (state.playerName){
+      els.playerNameBadge.textContent = `👤 ${state.playerName}`;
+      els.playerNameBadge.classList.remove('hidden');
+    } else {
+      els.playerNameBadge.classList.add('hidden');
+    }
+  }
+
+  function openNameModal(){
+    els.nameModalInput.value = state.playerName || '';
+    els.nameModal.classList.remove('hidden');
+    els.nameModal.classList.add('flex');
+    setTimeout(() => els.nameModalInput.focus(), 50);
+  }
+
+  function closeNameModal(){
+    els.nameModal.classList.add('hidden');
+    els.nameModal.classList.remove('flex');
+  }
+
+  function confirmNameAndStart(){
+    const name = els.nameModalInput.value.trim().slice(0, 20);
+    state.playerName = name;
+    if (name) localStorage.setItem(NAME_STORAGE_KEY, name);
+    updatePlayerBadge();
+    closeNameModal();
+    startGame();
+  }
+
+  function skipNameAndStart(){
+    state.playerName = '';
+    updatePlayerBadge();
+    closeNameModal();
+    startGame();
+  }
+
   function toggleLadderDrawer(open){
     els.ladderDrawer.classList.toggle('hidden', !open);
   }
 
-  els.btnStart.addEventListener('click', startGame);
+  els.btnStart.addEventListener('click', openNameModal);
   els.btnRestart.addEventListener('click', startGame);
+  els.btnNameConfirm.addEventListener('click', confirmNameAndStart);
+  els.btnNameSkip.addEventListener('click', skipNameAndStart);
+  els.nameModalInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmNameAndStart(); });
   els.btn5050.addEventListener('click', useFiftyFifty);
   els.btnWalk.addEventListener('click', walkAway);
   els.btnToggleLadder.addEventListener('click', () => toggleLadderDrawer(true));
@@ -756,6 +823,7 @@
 
   buildLadder();
   subscribeLeaderboard();
+  updatePlayerBadge();
 })();
 </script>
 </body>
